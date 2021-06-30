@@ -27,17 +27,17 @@ for mask_path in mask_paths:
     mask_pil = Image.open(mask_path)
     imsize = mask_pil.size[0]
 
-    #Resize
-    if(imsize != IMAGE_SIZE):
-        image_pil = image_resizer_pil(image_pil,IMAGE_SIZE)
-        mask_pil = image_resizer_pil(mask_pil,IMAGE_SIZE)
-
     #convert mask to greyscale
     mask_pil = convert_rgb_greyscale(mask_pil)
 
     #Numpy
     image = np.array(image_pil)
     mask = np.array(mask_pil)
+
+    # Resize
+    if (imsize != IMAGE_SIZE):
+        image = image_resizer_cv2(image, IMAGE_SIZE)
+        mask = image_resizer_cv2(mask, IMAGE_SIZE)
 
     #Remove alpha channel of image
     image = remove_alpha_channel(image)
@@ -46,12 +46,13 @@ for mask_path in mask_paths:
     mask[mask < 100] = 0
     mask[mask >= 100] = 255
 
-    save_numpy_image_FLOAT(image,"image.png")
-    save_numpy_image_FLOAT(mask,"mask.png")
-
     #normalize values
     image = image/255.0
     mask = mask/255.0
+
+    # save_numpy_image_FLOAT(image, "image.png")
+    # save_numpy_image_FLOAT(mask, "mask.png")
+    # exit(0)
 
     images.append(image)
 
