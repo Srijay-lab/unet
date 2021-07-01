@@ -3,6 +3,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import cv2
 import os
+import imageio as io
 
 def save_numpy_image_INT(img,path):
     im = Image.fromarray(img)
@@ -10,6 +11,9 @@ def save_numpy_image_INT(img,path):
 
 def save_numpy_image_FLOAT(img,path):
     matplotlib.image.imsave(path, img)
+
+def save_numpy_image_imageio(img,path):
+    io.imwrite(path,img)
 
 def remove_alpha_channel(img):
     if img.shape[2] == 4:

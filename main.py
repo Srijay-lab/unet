@@ -9,17 +9,17 @@ from tensorflow.keras.models import load_model
 
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-# TRAIN_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign"
-# TEST_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign/test_results"
-# TEST_RESULTS = "D:/warwick/datasets/digestpath/train_data/benign/unet_test_results"
+TRAIN_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign"
+TEST_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign/test_results"
+TEST_RESULTS = "D:/warwick/datasets/digestpath/train_data/benign/unet_test_results"
 
-TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data"
-TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
-TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
+# TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data"
+# TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
+# TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
 
 IMAGE_SIZE = 256
 mode = "test"
-epochs = 3
+epochs = 10
 model_file = 'unet_membrane.hdf5'
 
 
@@ -44,15 +44,15 @@ def read_image_mask(image_path,mask_path):
     image = remove_alpha_channel(image)
 
     # scale mask values to 0 and 255 only
-    mask[mask < 100] = 0
-    mask[mask >= 100] = 255
+    mask[mask < 128] = 0
+    mask[mask >= 128] = 255
 
     # normalize values
     image = image / 255.0
     mask = mask / 255.0
 
-    # save_numpy_image_FLOAT(image, "image.png")
-    # save_numpy_image_FLOAT(mask, "mask.png")
+    # save_numpy_image_imageio(image, "image.png")
+    # save_numpy_image_imageio(mask, "mask.png")
     # exit(0)
 
     #mask = np.expand_dims(mask, axis=2)
@@ -117,8 +117,8 @@ def load_test_data_scenegeneration_results():
 def save_results(gt_images,pred_images,folder,gt_name,pred_name):
     l = len(gt_images)
     for i in range(0,l):
-        save_numpy_image_FLOAT(gt_images[i],os.path.join(folder,str(i)+"_"+gt_name+".png"))
-        save_numpy_image_FLOAT(pred_images[i],os.path.join(folder,str(i)+"_"+pred_name+".png"))
+        save_numpy_image_imageio(gt_images[i],os.path.join(folder,str(i)+"_"+gt_name+".png"))
+        save_numpy_image_imageio(pred_images[i],os.path.join(folder,str(i)+"_"+pred_name+".png"))
 
 
 model = unet()
