@@ -90,10 +90,12 @@ def load_test_data_scenegeneration_results():
     gt_scenegeneration_masks = []
     pred_scenegeneration_images = []
     pred_scenegeneration_masks = []
+    image_names = []
 
     for path in paths:
         imname = os.path.split(path)[1]
         if("gt_image" in path):
+            image_names.append(imname.split(".")[0])
             gt_image_path = path
             pred_image_path = os.path.join(TEST_FOLDER,imname.replace("gt_image","pred_image"))
             gt_mask_path = os.path.join(TEST_FOLDER,imname.replace("gt_image","gt_mask"))
@@ -111,15 +113,15 @@ def load_test_data_scenegeneration_results():
     pred_scenegeneration_images = np.array(pred_scenegeneration_images)
     pred_scenegeneration_masks = np.array(pred_scenegeneration_masks)
 
-    return gt_scenegeneration_images,gt_scenegeneration_masks,pred_scenegeneration_images,pred_scenegeneration_masks
+    return image_names,gt_scenegeneration_images,gt_scenegeneration_masks,pred_scenegeneration_images,pred_scenegeneration_masks
 
 
-def save_results(gt_images,pred_images,folder,gt_name,pred_name):
+def save_results(image_names, gt_images,pred_images,folder,gt_name,pred_name):
     l = len(gt_images)
     dice_score = 0
     for i in range(0,l):
-        save_numpy_image_imageio(gt_images[i],os.path.join(folder,str(i)+"_"+gt_name+".png"))
-        save_numpy_image_imageio(pred_images[i],os.path.join(folder,str(i)+"_"+pred_name+".png"))
+        save_numpy_image_imageio(gt_images[i],os.path.join(folder,image_names[i]+"_"+gt_name+".png"))
+        save_numpy_image_imageio(pred_images[i],os.path.join(folder,image_names[i]+"_"+pred_name+".png"))
         dice_score += compute_dice_score(gt_images[i],pred_images[i])
     dice_score=dice_score/l*1.0
     print("-----------------------------------------Dice score between "+gt_name+" and "+pred_name + " is "+str(dice_score))
@@ -147,7 +149,7 @@ else:
     model = load_model(model_file)
     print("Model loaded")
 
-    gt_scenegeneration_images, gt_scenegeneration_masks, pred_scenegeneration_images, pred_scenegeneration_masks = load_test_data_scenegeneration_results()
+    image_names, gt_scenegeneration_images, gt_scenegeneration_masks, pred_scenegeneration_images, pred_scenegeneration_masks = load_test_data_scenegeneration_results()
     print("Data loaded")
 
     gt_scene_mask_predictions = model.predict(gt_scenegeneration_images,verbose=1)
@@ -156,5 +158,5 @@ else:
     gt_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in gt_scene_mask_predictions]
     pred_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in pred_scene_mask_predictions]
 
-    save_results(gt_scenegeneration_masks,gt_scene_mask_predictions,TEST_RESULTS,"gt_scene_gt_masks","gt_scene_pred_masks")
-    save_results(pred_scenegeneration_masks,pred_scene_mask_predictions,TEST_RESULTS,"pred_scene_gt_masks","pred_scene_pred_masks")
+    save_results(image_names, gt_scenegeneration_masks,gt_scene_mask_predictions,TEST_RESULTS,"gt_scene_gt_masks","gt_scene_pred_masks")
+    save_results(image_names, pred_scenegeneration_masks,pred_scene_mask_predictions,TEST_RESULTS,"pred_scene_gt_masks","pred_scene_pred_masks")
