@@ -13,14 +13,14 @@ TRAIN_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign"
 TEST_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign/test_results"
 TEST_RESULTS = "D:/warwick/datasets/digestpath/train_data/benign/unet_test_results"
 
-# TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data"
-# TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
-# TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
+TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data/train"
+TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
+TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
 
 IMAGE_SIZE = 256
 mode = "test"
-epochs = 10
-model_file = 'unet_membrane.hdf5'
+epochs = 50
+model_file = 'unet-scene-exp10.hdf5'
 
 
 def read_image_mask(image_path,mask_path):
