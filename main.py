@@ -13,9 +13,9 @@ TRAIN_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign"
 TEST_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign/test_results"
 TEST_RESULTS = "D:/warwick/datasets/digestpath/train_data/benign/unet_test_results"
 
-TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data/train"
-TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
-TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
+# TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data/train"
+# TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
+# TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
 
 IMAGE_SIZE = 256
 mode = "test"
@@ -120,6 +120,10 @@ def save_results(gt_images,pred_images,folder,gt_name,pred_name):
         save_numpy_image_imageio(gt_images[i],os.path.join(folder,str(i)+"_"+gt_name+".png"))
         save_numpy_image_imageio(pred_images[i],os.path.join(folder,str(i)+"_"+pred_name+".png"))
 
+def binarize_segmentation_outputs(x):
+    x[x < 0.5] = 0
+    x[x >= 0.5] = 1.0
+    return x 
 
 model = unet()
 
@@ -142,6 +146,12 @@ else:
 
     gt_scene_mask_predictions = model.predict(gt_scenegeneration_images,verbose=1)
     pred_scene_mask_predictions = model.predict(pred_scenegeneration_images,verbose=1)
+
+    gt_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in gt_scene_mask_predictions]
+    pred_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in pred_scene_mask_predictions]
+
+    print(np.unique(gt_scene_mask_predictions[0]))
+    exit(0)
 
     save_results(gt_scenegeneration_masks,gt_scene_mask_predictions,TEST_RESULTS,"gt_scene_gt_masks","gt_scene_pred_masks")
     save_results(pred_scenegeneration_masks,pred_scene_mask_predictions,TEST_RESULTS,"pred_scene_gt_masks","pred_scene_pred_masks")
