@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 import imageio as io
+import numpy as np
 
 def save_numpy_image_INT(img,path):
     im = Image.fromarray(img)
@@ -35,3 +36,7 @@ def convert_rgb_greyscale(img):
 def mkdir(dir):
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+def compute_dice_score(x,y):
+    k=1
+    return np.sum(x[y==k])*2.0 / (np.sum(x) + np.sum(y))

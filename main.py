@@ -116,14 +116,20 @@ def load_test_data_scenegeneration_results():
 
 def save_results(gt_images,pred_images,folder,gt_name,pred_name):
     l = len(gt_images)
+    dice_score = 0
     for i in range(0,l):
         save_numpy_image_imageio(gt_images[i],os.path.join(folder,str(i)+"_"+gt_name+".png"))
         save_numpy_image_imageio(pred_images[i],os.path.join(folder,str(i)+"_"+pred_name+".png"))
+        dice_score += compute_dice_score(gt_images[i],pred_images[i])
+    dice_score=dice_score/l*1.0
+    print("-----------------------------------------Dice score between "+gt_name+" and "+pred_name + " is "+str(dice_score))
+
 
 def binarize_segmentation_outputs(x):
     x[x < 0.5] = 0
     x[x >= 0.5] = 1.0
-    return x 
+    return x
+
 
 model = unet()
 
@@ -149,9 +155,6 @@ else:
 
     gt_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in gt_scene_mask_predictions]
     pred_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in pred_scene_mask_predictions]
-
-    print(np.unique(gt_scene_mask_predictions[0]))
-    exit(0)
 
     save_results(gt_scenegeneration_masks,gt_scene_mask_predictions,TEST_RESULTS,"gt_scene_gt_masks","gt_scene_pred_masks")
     save_results(pred_scenegeneration_masks,pred_scene_mask_predictions,TEST_RESULTS,"pred_scene_gt_masks","pred_scene_pred_masks")
