@@ -6,6 +6,10 @@ import os
 import imageio as io
 import numpy as np
 
+def display_image(img):
+    plt.imshow(img)
+    plt.show()
+
 def save_numpy_image_INT(img,path):
     im = Image.fromarray(img)
     im.save(path)

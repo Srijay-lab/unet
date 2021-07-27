@@ -9,18 +9,18 @@ from tensorflow.keras.models import load_model
 
 #os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
-TRAIN_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign"
-TEST_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign/test_results"
-TEST_RESULTS = "D:/warwick/datasets/digestpath/train_data/benign/unet_test_results"
+# TRAIN_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign"
+# TEST_FOLDER = "D:/warwick/datasets/digestpath/train_data/benign/test_results"
+# TEST_RESULTS = "D:/warwick/datasets/digestpath/train_data/benign/unet_test_results"
 
-# TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data/train"
-# TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
-# TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10"
+TRAIN_FOLDER = "F:/Datasets/DigestPath/scene_generation/onlybenign/old_split_exp10_v0/train_data/train"
+TEST_FOLDER = "C:/Users/Srijay/Desktop/Projects/scene_graph_pathology/training_outputs/prev_experiments/test_10"
+TEST_RESULTS = "C:/Users/Srijay/Desktop/Projects/Keras/unet/results/exp10-2"
 
 IMAGE_SIZE = 256
 mode = "test"
 epochs = 50
-model_file = 'unet-scene-exp10.hdf5'
+model_file = 'unet-scene-exp10-2.hdf5'
 
 
 def read_image_mask(image_path,mask_path):
@@ -44,8 +44,8 @@ def read_image_mask(image_path,mask_path):
     image = remove_alpha_channel(image)
 
     # scale mask values to 0 and 255 only
-    mask[mask < 128] = 0
-    mask[mask >= 128] = 255
+    mask[mask < 40] = 0
+    mask[mask >= 40] = 255
 
     # normalize values
     image = image / 255.0
@@ -125,6 +125,7 @@ def save_results(image_names, gt_images,pred_images,folder,gt_name,pred_name):
         dice_score += compute_dice_score(gt_images[i],pred_images[i])
     dice_score=dice_score/l*1.0
     print("-----------------------------------------Dice score between "+gt_name+" and "+pred_name + " is "+str(dice_score))
+    return dice_score
 
 
 def binarize_segmentation_outputs(x):
@@ -158,5 +159,8 @@ else:
     gt_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in gt_scene_mask_predictions]
     pred_scene_mask_predictions = [binarize_segmentation_outputs(x) for x in pred_scene_mask_predictions]
 
-    save_results(image_names, gt_scenegeneration_masks,gt_scene_mask_predictions,TEST_RESULTS,"gt_scene_gt_masks","gt_scene_pred_masks")
-    save_results(image_names, pred_scenegeneration_masks,pred_scene_mask_predictions,TEST_RESULTS,"pred_scene_gt_masks","pred_scene_pred_masks")
+    dice1 = save_results(image_names, gt_scenegeneration_masks,gt_scene_mask_predictions,TEST_RESULTS,"gt_scene_gt_masks","gt_scene_pred_masks")
+    dice2 = save_results(image_names, pred_scenegeneration_masks,pred_scene_mask_predictions,TEST_RESULTS,"pred_scene_gt_masks","pred_scene_pred_masks")
+
+    print("dice1 :",dice1)
+    print("dice2 :",dice2)
